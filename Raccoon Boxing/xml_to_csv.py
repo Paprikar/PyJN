@@ -23,12 +23,4 @@ def xml_to_csv(path):
             
     column_name = ['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax']
     xml_df = pd.DataFrame(xml_list, columns=column_name)
-    xml_df.to_csv('raccoon_labels.csv', index=None)
-
-def main():
-    image_path = os.path.join(os.getcwd(), 'annotations')
-    xml_df = xml_to_csv(image_path)
-    xml_df.to_csv('raccoon_labels.csv', index=None)
-    print('Successfully converted xml to csv')
-
-main()
+    return xml_df.to_csv('raccoon_labels.csv', index=None)

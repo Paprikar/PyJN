@@ -90,6 +90,6 @@ ENV/
 
 # Custom ignore list
 .vscode/
-UNet/DATA/
-Nums/DATA/
-Raccoon\ Boxing/DATA/
+UNet/DATA/*
+Nums/DATA/*
+Raccoon\ Boxing/DATA/*

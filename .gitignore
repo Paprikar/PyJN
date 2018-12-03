@@ -89,7 +89,7 @@ ENV/
 .ropeproject
 
 # Custom ignore list
-**/.vscode/
-**/UNet/DATA/
-**/Nums/DATA/
-**/Raccoon\ Boxing/DATA/
+.vscode/
+UNet/DATA/**
+Nums/DATA/**
+Raccoon\ Boxing/DATA/**

@@ -91,4 +91,3 @@ ENV/
 # Custom ignore list
 .vscode/
 **/DATA/**/*
-**/DATA/*

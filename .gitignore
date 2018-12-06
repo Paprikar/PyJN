@@ -91,3 +91,5 @@ ENV/
 # Custom ignore list
 .vscode/
 **/DATA/**/*
+*.weights
+*.h5

@@ -1,11 +1,19 @@
 """Demo for use yolo v3
 """
 import os
+import argparse
 import time
 import cv2
 import numpy as np
 from model.yolo_model import YOLO
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '-model_path',
+    help='Path to converted to keras model file.')
+parser.add_argument(
+    '-classes_path',
+    help='Path classes list file.')
 
 def process_image(img):
     """Resize, reduce and expand image.
@@ -90,57 +98,30 @@ def detect_image(image, yolo, all_classes):
     boxes, classes, scores = yolo.predict(pimage, image.shape)
     end = time.time()
 
-    print('time: {0:.2f}s'.format(end - start))
+    print('time: {:.3f}s'.format(end - start))
 
     if boxes is not None:
         draw(image, boxes, scores, classes, all_classes)
 
     return image
 
-
-def detect_video(video, yolo, all_classes):
-    """Use yolo v3 to detect video.
-
-    # Argument:
-        video: video file.
-        yolo: YOLO, yolo model.
-        all_classes: all classes name.
-    """
-    video_path = os.path.join("videos", "test", video)
-    camera = cv2.VideoCapture(video_path)
-    cv2.namedWindow("detection", cv2.WINDOW_AUTOSIZE)
-
-    # Prepare for saving the detected video
-    sz = (int(camera.get(cv2.CAP_PROP_FRAME_WIDTH)),
-        int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-    fourcc = cv2.VideoWriter_fourcc(*'mpeg')
-
-    vout = cv2.VideoWriter()
-    vout.open(os.path.join("videos", "res", video), fourcc, 20, sz, True)
-
-    while True:
-        res, frame = camera.read()
-
-        if not res:
-            break
-
-        image = detect_image(frame, yolo, all_classes)
-        cv2.imshow("detection", image)
-
-        # Save the video frame by frame
-        vout.write(image)
-
-        if cv2.waitKey(110) & 0xff == 27:
-                break
-
-    vout.release()
-    camera.release()
-
-
 if __name__ == '__main__':
-    yolo = YOLO(0.6, 0.5)
-    file = 'data/coco_classes.txt'
-    all_classes = get_classes(file)
+    args = parser.parse_args()
+
+    if args.model_path is not None:
+        model_path = os.path.expanduser(args.model_path)
+        assert model_path.endswith('.h5'), 'Model path {} is not a .h5 file'.format(model_path)
+    else:
+        model_path = 'data/yolo.h5'
+
+    if args.classes_path is not None:
+        classes_path = os.path.expanduser(args.classes_path)
+        assert classes_path.endswith('.txt'), 'Classes path {} is not a .txt file'.format(classes_path)
+    else:
+        classes_path = 'data/coco_classes.txt'
+
+    yolo = YOLO(model_path, 0.6, 0.5)
+    all_classes = get_classes(classes_path)
 
     # detect images in test floder.
     for (root, dirs, files) in os.walk('images/test'):
@@ -151,7 +132,3 @@ if __name__ == '__main__':
                 image = cv2.imread(path)
                 image = detect_image(image, yolo, all_classes)
                 cv2.imwrite('images/res/' + f, image)
-
-    # detect videos one at a time in videos/test folder
-    video = 'library1.mp4'
-    detect_video(video, yolo, all_classes)

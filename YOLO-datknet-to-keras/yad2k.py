@@ -13,12 +13,12 @@ from collections import defaultdict
 
 import numpy as np
 from keras import backend as K
-from keras.layers import (Conv2D, GlobalAveragePooling2D, Input, Reshape,
-                          ZeroPadding2D, UpSampling2D, Activation, Lambda, MaxPooling2D)
+from keras.layers import (Conv2D, GlobalAveragePooling2D, Input, Reshape, ZeroPadding2D, UpSampling2D, Activation, Lambda, MaxPooling2D)
 from keras.layers.advanced_activations import LeakyReLU
 from keras.layers.merge import concatenate, add
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model
+from keras.optimizers import Adam
 from keras.regularizers import l2
 from keras.utils.vis_utils import plot_model as plot
 
@@ -272,6 +272,9 @@ def _main(args):
 
     # Create and save model.
     model = Model(inputs=all_layers[0], outputs=[all_layers[i] for i in outputs])
+    model.compile(optimizer=Adam(lr=1e-3), loss={
+        # use custom yolo_loss Lambda layer.
+        'yolo_loss': lambda y_true, y_pred: y_pred})
     #### !!! https://github.com/qqwweee/keras-yolo3/blob/master/yolo3/model.py#L345
     print('\n'+'='*98+'\n'+'{:^98}'.format('Model Summary'))
     print(model.summary())

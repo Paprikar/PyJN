@@ -68,18 +68,19 @@ def draw(image, boxes, scores, classes, all_classes):
         right = min(image.shape[1], np.floor(x + w + 0.5).astype(int))
         bottom = min(image.shape[0], np.floor(y + h + 0.5).astype(int))
 
-        cv2.rectangle(image, (top, left), (right, bottom), (255, 0, 0), 2)
-        cv2.putText(image, '{0} {1:.2f}'.format(all_classes[cl], score),
-                    (top, left - 6),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6, (0, 0, 255), 1,
-                    cv2.LINE_AA)
+        image = cv2.rectangle(image, (top, left), (right, bottom), (255, 0, 0), 2)
+        image = cv2.putText(image, '{0} {1:.2f}'.format(all_classes[cl], score),
+                            (top, left - 6),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.6, (0, 0, 255), 1,
+                            cv2.LINE_AA)
 
         print('class: {0}, score: {1:.2f}'.format(all_classes[cl], score))
         print('box coordinate x,y,w,h: {0}'.format(box))
 
     print()
 
+    return image
 
 def detect_image(image, yolo, all_classes):
     """Use yolo v3 to detect images.
@@ -98,10 +99,10 @@ def detect_image(image, yolo, all_classes):
     boxes, classes, scores = yolo.predict(pimage, image.shape)
     end = time.time()
 
-    print('time: {:.3f}s'.format(end - start))
+    print('Prediction time: {:.4f}s'.format(end - start))
 
     if boxes is not None:
-        draw(image, boxes, scores, classes, all_classes)
+        image = draw(image, boxes, scores, classes, all_classes)
 
     return image
 

@@ -3,6 +3,8 @@
 import numpy as np
 import keras.backend as K
 from keras.models import load_model
+from losses import yolo_loss
+from keras.optimizers import Adam
 
 
 class YOLO:
@@ -18,6 +20,9 @@ class YOLO:
         self._t1 = obj_threshold
         self._t2 = nms_threshold
         self._yolo = load_model(model_path)
+        #self._yolo.compile(optimizer=Adam(lr=1e-3), loss={
+            # use custom yolo_loss Lambda layer.
+            #'yolo_loss': lambda y_true, y_pred: y_pred})
 
     def _sigmoid(self, x):
         """sigmoid.
@@ -199,6 +204,7 @@ class YOLO:
         return boxes, classes, scores
 
     def predict(self, image, shape):
+        import time
         """Detect the objects with yolo.
 
         # Arguments
@@ -210,8 +216,13 @@ class YOLO:
             classes: ndarray, classes of objects.
             scores: ndarray, scores of objects.
         """
-
+        start = time.time()
         outs = self._yolo.predict(image)
+        pred_time = time.time()-start
+        #print('Predicted time:', )
+        start = time.time()
         boxes, classes, scores = self._yolo_out(outs, shape)
+        calc_time = time.time()-start
+        #print('Genetated time:', time.time()-start)
 
-        return boxes, classes, scores
+        return boxes, classes, scores, [pred_time, calc_time, pred_time+calc_time]

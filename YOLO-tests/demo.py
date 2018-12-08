@@ -1,11 +1,13 @@
 """Demo for use yolo v3
 """
-import os
 import argparse
+import os
 import time
-import cv2
+
 import numpy as np
 from model.yolo_model import YOLO
+
+import cv2
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -113,7 +115,7 @@ if __name__ == '__main__':
         model_path = os.path.expanduser(args.model_path)
         assert model_path.endswith('.h5'), 'Model path {} is not a .h5 file'.format(model_path)
     else:
-        model_path = 'data/yolo.h5'
+        model_path = 'data/yolov3-416.h5'
 
     if args.classes_path is not None:
         classes_path = os.path.expanduser(args.classes_path)

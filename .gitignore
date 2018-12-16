@@ -89,7 +89,9 @@ ENV/
 .ropeproject
 
 # Custom ignore list
+.gitignore
 .vscode/
 **/DATA/**/*
 *.weights
 *.h5
+*.project.*
